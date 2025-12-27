@@ -1,3 +1,5 @@
+import 'package:elapor_mobile/screens/add_report_screen.dart';
+import 'package:elapor_mobile/screens/detail_report_screen.dart';
 import 'package:flutter/material.dart';
 import '../services/report_service.dart';
 import '../models/report_model.dart';
@@ -99,6 +101,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           "Koordinat: ${report.lat}, ${report.lng}",
                         ),
                         trailing: Icon(Icons.chevron_right),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailReportScreen(report: report),
+                            ),
+                          );
+                        },
                       );
                     },
                   );
@@ -116,14 +127,22 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Refresh data
-          setState(() {
-            futureReports = ReportService().fetchReports();
-            fetchStats();
-          });
+        onPressed: () async {
+          //Pindah ke halaman tambah laporan
+          bool? refresh = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddReportScreen()),
+          );
+
+          //jika berhasil tambah data, refreshlost di home
+          if (refresh == true) {
+            setState(() {
+              futureReports = ReportService().fetchReports();
+              fetchStats();
+            });
+          }
         },
-        child: Icon(Icons.refresh),
+        child: Icon(Icons.add),
       ),
     );
   }
